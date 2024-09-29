@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  afrahdb:
+    image: postgres:latest
+    container_name: afrahdb
+    environment:
+      PUID: 1000
+      PGID: 1000
+      POSTGRES_USER: afrah
+      POSTGRES_PASSWORD: "AF.o.D@h.vPS24"
+      POSTGRES_DB: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - /opt/odoo17/afrah/afrahdb:/var/lib/postgresql/data
+
+  afrah:
+    image: afrah_odoo17_image_tag:17
+    container_name: afrah
+    depends_on:
+      - afrahdb
+    environment:
+      PUID: 1000
+      PGID: 1000
+      HOST: afrahdb
+      USER: afrah
+      PASSWORD: "AF.o.D@h.vPS24"
+      DB_NAME: postgres
+    ports:
+      - "8076:8069"
+    volumes:
+      - /opt/odoo17/afrah/afrah-data:/var/lib/odoo
+      - /opt/odoo17/afrah/afrah-addons:/mnt/extra-addons
+
+================================================================
+
+version: '3.8'
+
+services:
+  app1:
+    build:
+      context: ./app1
+      args:
+        PUID: 1000
+        PGID: 1000
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - shared-data:/app/data
+
+  app2:
+    build:
+      context: ./app2
+      args:
+        PUID: 1000
+        PGID: 1000
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - shared-data:/app/data
+
+volumes:
+  shared-data:
+
+==========================================================================
+
+version: '2.1'
+services:
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: duplicati
+    environment:
+      - PUID=1002
+      - PGID=1002
+      - TZ-AST/Riyadh
+      - CLI_ARGS= # Optional
+    ports:
+      - 8200:8200
+    volumes:
+      - ./config:/config:/config
+      - /mnt/backup/:/backups
+      - /opt/:/source
+    restart: unless-stopped

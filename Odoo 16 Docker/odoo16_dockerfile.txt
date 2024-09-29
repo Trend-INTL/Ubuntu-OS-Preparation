@@ -1,0 +1,42 @@
+# Use the official Odoo 16 image from Docker Hub
+FROM odoo:16
+
+# Expose Odoo port
+EXPOSE 8079
+
+# Set environment variables
+ENV ODOO_VERSION 16.0
+
+# Clone Odoo repository
+RUN git clone https://www.github.com/odoo/odoo --branch $ODOO_VERSION --depth 1 /opt/odoo16/erp \    
+    && chmod +x /opt/odoo16/erp/odoo \
+    && chown -R $USER:$USER /opt/odoo16/erp/odoo
+
+# Create PostgreSQL user for Odoo
+RUN apt-get update \
+    && apt-get install -y postgresql-client \
+    && service postgresql start \
+    && sudo -u postgres psql -c "drop database if exists erpdb;" \
+    && sudo -u postgres psql -c "drop role if exists erp;" \
+    && sudo -u postgres createuser -d -R -S $USER \
+    && service postgresql restart
+
+# Create Odoo conf directory
+RUN rm -rf /etc/odoo \
+    && mkdir -p /etc/odoo \
+    && mkdir -p /etc/odoo/odoo16 \
+    && chmod +x /etc/odoo/odoo16 \
+    && chown -R $USER:$USER /etc/odoo/odoo16
+
+# Clone custom addons from GitHub repository
+RUN git clone https://github.com/Trend-INTL/Odoo-16-Modules.git /opt/odoo16 \
+    && chmod +x /opt/odoo16/addons16 \
+    && chown -R $USER:$USER /opt/odoo16/addons16
+
+# Install required Python packages for Odoo
+RUN /opt/odoo16/erp/odoo/venv/bin/pip install -r /opt/odoo16/erp/odoo/requirements.txt
+
+# Copy custom addons (if any)
+COPY ./addons /opt/odoo16/addons
+
+

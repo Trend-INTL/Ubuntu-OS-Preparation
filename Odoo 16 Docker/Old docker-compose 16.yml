@@ -1,0 +1,61 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    restart: always             # run as a service
+    environment:
+      POSTGRES_USER=test
+      POSTGRES_PASSWORD=Test.O.D@h.Vps24
+      POSTGRES_DB=test
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  odoo:
+   image: odoo:16
+   restart: always             # run as a service
+   depends_on:
+     - db
+   environment:
+     - HOST=db
+     - USER=test
+     - PASSWORD=Test.O.D@h.Vps24
+   ports:
+     - "8077:8069"
+     - "8071:8072" # live chat
+    tty: true
+    command: --
+   volumes:
+     - odoo16-data:/etc
+     - ./extra_addons:/addons  # Mount extra_addons directory
+  pgadmin:
+   image: fenglc/pgadmin4
+   restart: always
+     ports:
+       - 5050:5050
+   links:
+       - db:db
+   environment:
+      DEFAULT_USER: admin
+      DEFAULT_PASSWORD: YbrS9eP4!j
+     # VIRTUAL_HOST: 
+     # LETSENCRYPT_HOST:
+     # VIRTUAL_PORT: 5050
+   volumes:
+      - ./pgadmin-data:/var/lib/pgadmin
+      #- /var/run/docker.sock:/tmp/docker.sock
+
+volumes:
+  postgres-data:
+  odoo-data:
+  pgadmin-data:
+
+
+
+
+RUN mkdir -p etc \
+    && chown test etc \
+    && chmod -R +x etc \
+
+# Copy entrypoint script and Odoo configuration file
+COPY ./entrypoint.sh /
+COPY ./odoo.conf /etc

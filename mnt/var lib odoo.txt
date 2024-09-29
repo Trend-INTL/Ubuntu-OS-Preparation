@@ -1,0 +1,147 @@
+# Make dir for odoo data, filestore & sessions and set permission
+RUN mkdir -p /var/lib/odoo
+RUN chmod -R +x /var/lib/odoo
+RUN chown -R odoo:odoo /var/lib/odoo
+RUN mkdir -p /var/lib/odoo/addons
+RUN chmod -R +x /var/lib/odoo/addons
+RUN chown -R odoo:odoo /var/lib/odoo/addons
+RUN mkdir -p /var/lib/odoo/sessions
+RUN chmod -R +x /var/lib/odoo/sessions
+RUN chown -R odoo:odoo /var/lib/odoo/sessions
+RUN mkdir -p /var/lib/odoo/filestore
+RUN chmod -R +x /var/lib/odoo/filestore
+RUN chown -R odoo:odoo /var/lib/odoo/filestore
+
+=============================================================================
+
+2024-08-17 11:18:10,951 1 INFO ? odoo.service.server: Initiating shutdown 
+
+2024-08-17 11:18:10,951 1 INFO ? odoo.service.server: Hit CTRL-C again or send a second signal to force the shutdown. 
+
+2024-08-17 11:18:11,250 1 INFO ? odoo.sql_db: ConnectionPool(used=0/count=0/max=64): Closed 2 connections  
+
+grep: /var/lib/odoo/odoo.conf: No such file or directory
+
+grep: /var/lib/odoo/odoo.conf: No such file or directory
+
+grep: /var/lib/odoo/odoo.conf: No such file or directory
+
+grep: /var/lib/odoo/odoo.conf: No such file or directory
+
+2024-08-17 11:18:12,532 1 INFO ? odoo: Odoo version 17.0-20240730 
+
+2024-08-17 11:18:12,533 1 INFO ? odoo: addons paths: ['/usr/lib/python3/dist-packages/odoo/addons'] 
+
+2024-08-17 11:18:12,533 1 INFO ? odoo: database: odoo@mntdb:5432 
+
+2024-08-17 11:18:12,610 1 INFO ? odoo.addons.base.models.ir_actions_report: Will use the Wkhtmltopdf binary at /usr/local/bin/wkhtmltopdf 
+
+2024-08-17 11:18:12,757 1 INFO ? odoo.service.server: HTTP service (werkzeug) running on 85b3dfa76618:8069 
+
+2024-08-17 11:18:27,892 1 ERROR ? odoo.http: Exception during request handling. 
+
+Traceback (most recent call last):
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 2182, in __call__
+
+    request._post_init()
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 1374, in _post_init
+
+    self.session, self.db = self._get_session_and_dbname()
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 1378, in _get_session_and_dbname
+
+    if not sid or not root.session_store.is_valid_key(sid):
+
+  File "/usr/lib/python3/dist-packages/odoo/tools/func.py", line 28, in __get__
+
+    value = self.fget(obj)
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 2107, in session_store
+
+    path = odoo.tools.config.session_dir
+
+  File "/usr/lib/python3/dist-packages/odoo/tools/config.py", line 759, in session_dir
+
+    os.makedirs(d, 0o700)
+
+  File "/usr/lib/python3.10/os.py", line 225, in makedirs
+
+    mkdir(name, mode)
+
+PermissionError: [Errno 13] Permission denied: '/var/lib/odoo/sessions'
+
+2024-08-17 11:18:27,894 1 INFO ? werkzeug: 172.17.0.1 - - [17/Aug/2024 11:18:27] "GET /websocket HTTP/1.1" 500 - 0 0.000 0.002
+
+2024-08-17 11:19:29,066 1 ERROR ? odoo.http: Exception during request handling. 
+
+Traceback (most recent call last):
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 2182, in __call__
+
+    request._post_init()
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 1374, in _post_init
+
+    self.session, self.db = self._get_session_and_dbname()
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 1378, in _get_session_and_dbname
+
+    if not sid or not root.session_store.is_valid_key(sid):
+
+  File "/usr/lib/python3/dist-packages/odoo/tools/func.py", line 28, in __get__
+
+    value = self.fget(obj)
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 2107, in session_store
+
+    path = odoo.tools.config.session_dir
+
+  File "/usr/lib/python3/dist-packages/odoo/tools/config.py", line 759, in session_dir
+
+    os.makedirs(d, 0o700)
+
+  File "/usr/lib/python3.10/os.py", line 225, in makedirs
+
+    mkdir(name, mode)
+
+PermissionError: [Errno 13] Permission denied: '/var/lib/odoo/sessions'
+
+2024-08-17 11:19:29,067 1 INFO ? werkzeug: 172.17.0.1 - - [17/Aug/2024 11:19:29] "GET /websocket HTTP/1.1" 500 - 0 0.000 0.002
+
+2024-08-17 11:20:29,463 1 ERROR ? odoo.http: Exception during request handling. 
+
+Traceback (most recent call last):
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 2182, in __call__
+
+    request._post_init()
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 1374, in _post_init
+
+    self.session, self.db = self._get_session_and_dbname()
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 1378, in _get_session_and_dbname
+
+    if not sid or not root.session_store.is_valid_key(sid):
+
+  File "/usr/lib/python3/dist-packages/odoo/tools/func.py", line 28, in __get__
+
+    value = self.fget(obj)
+
+  File "/usr/lib/python3/dist-packages/odoo/http.py", line 2107, in session_store
+
+    path = odoo.tools.config.session_dir
+
+  File "/usr/lib/python3/dist-packages/odoo/tools/config.py", line 759, in session_dir
+
+    os.makedirs(d, 0o700)
+
+  File "/usr/lib/python3.10/os.py", line 225, in makedirs
+
+    mkdir(name, mode)
+
+PermissionError: [Errno 13] Permission denied: '/var/lib/odoo/sessions'
+
+2024-08-17 11:20:29,463 1 INFO ? werkzeug: 172.17.0.1 - - [17/Aug/2024 11:20:29] "GET /websocket HTTP/1.1" 500 - 0 0.000 0.001

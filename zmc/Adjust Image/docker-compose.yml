@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  zmcdb:
+    image: postgres:latest
+    container_name: zmcdb
+    environment:
+      POSTGRES_USER: zmc
+      POSTGRES_PASSWORD: zmc
+      POSTGRES_DB: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./zmcdb:/var/lib/postgresql/data
+
+  zmc:
+    image: zmc_odoo17_image_tag:17
+    container_name: zmc
+    depends_on:
+      - zmcdb
+    environment:
+      HOST: zmcdb
+      USER: zmc
+      PASSWORD: zmc
+      DB_NAME: postgres
+    ports:
+      - "8075:8069"
+    volumes:
+      - ./zmc-data:/var/lib/odoo
+      - ./zmc-addons:/mnt/extra-addons

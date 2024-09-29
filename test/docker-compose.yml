@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  test1db:
+    image: postgres:latest
+    container_name: test1db
+    build:
+      context: ./test1db
+      args:
+        PUID: 1001
+        PGID: 997
+    environment:
+      PUID: 1001
+      PGID: 997
+      POSTGRES_USER: test1
+      POSTGRES_PASSWORD: "T1.o.D@h.vPS24"
+      POSTGRES_DB: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - /opt/docker/test1/test1db:/var/lib/postgresql/data
+    networks:
+      test1:
+        ipv4_address: 172.31.0.2
+
+  test1:
+    image: test1_odoo17_image_tag:17
+    container_name: test1
+    depends_on:
+      - test1db
+    build:
+      context: ./test1
+      args:
+        PUID: 1001
+        PGID: 997
+    environment:
+      PUID: 1001
+      PGID: 997
+      HOST: test1db
+      USER: test1
+      PASSWORD: "T1.o.D@h.vPS24"
+      DB_NAME: postgres
+    ports:
+      - "8269:8069"
+      - "8271:8071"
+      - "8272:8072"
+    volumes:
+      - /opt/docker/test1/test1-data:/var/lib/odoo
+      - /opt/docker/test1/test1-addons:/mnt/extra-addons
+      - /opt/docker/test1/test1-conf:/etc/odoo
+    networks:
+      test1:
+        ipv4_address: 172.31.0.3
+
+networks:
+  test1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16

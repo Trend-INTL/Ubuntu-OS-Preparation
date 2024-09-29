@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mntdb:
+    image: postgres:latest
+    container_name: mntdb
+    environment:
+      POSTGRES_USER: mnt
+      POSTGRES_PASSWORD: Odoo.O.D@h.Vps24
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - /opt/odoo17/mnt/mntdb:/var/lib/postgresql/data
+    networks:
+      mnt:
+        ipv4_address: 172.18.0.2
+
+  mnt:
+    image: my_odoo17_image_tag:17
+    container_name: mnt
+    depends_on:
+      - mntdb
+    environment:
+      HOST: mntdb
+      USER: mnt
+      PASSWORD: Odoo.O.D@h.Vps24
+      DB_NAME: postgres
+    ports:
+      - "8169:8069"
+      - "8172:8072"
+      - "8173:8073"
+      - "8171:8071"
+    volumes:
+      - /opt/odoo17/mnt/mnt-data:/var/lib/odoo
+      - /opt/odoo17/mnt/mnt-addons:/mnt/extra-addons
+      - /opt/odoo17/mnt/mnt-conf:/etc/odoo
+    networks:
+      mnt:
+        ipv4_address: 172.18.0.3
+
+networks:
+  mnt:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16

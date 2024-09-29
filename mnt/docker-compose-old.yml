@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mntdb:
+    image: postgres:latest
+    container_name: mntdb
+    user: root
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./mntdb:/var/lib/postgresql/data
+
+  mnt:
+    image: my_odoo17_image_tag:17
+    container_name: mnt
+    user: root
+    depends_on:
+      - mntdb
+    environment:
+      HOST: mntdb
+      USER: odoo
+      PASSWORD: odoo
+      DB_NAME: postgres
+    ports:
+      - "8077:8069"
+    volumes:
+      - ./mnt-data:/var/lib/odoo
+      - ./mnt-addons:/mnt/extra-addons

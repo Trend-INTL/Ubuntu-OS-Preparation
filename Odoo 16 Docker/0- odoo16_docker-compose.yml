@@ -1,0 +1,32 @@
+version: '3'
+services:
+  odoo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: odoo:16.0
+    container_name: odoo16_container
+    ports:
+      - "8077:8077"  # Adjust port as needed
+    volumes:
+      - odoo_data:/opt/odoo16/erp/odoo/venv/lib/python3.10/site-packages/odoo
+      - ./config:/etc/odoo/odoo16
+      - ./addons:/opt/odoo16/addons16  # Mapping to additional addons directory
+    depends_on:
+      - db
+    environment:
+      - ODOO_RC=/etc/odoo/odoo16/erp.conf
+
+  db:
+    image: postgres:13
+    container_name: postgres13_container
+    environment:
+      - POSTGRES_USER=erp
+      - POSTGRES_PASSWORD=ERP.O@H.vps24
+      - POSTGRES_DB=erpdb16
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  odoo_data:
+  db_data:

@@ -1,0 +1,37 @@
+# Create your directory & Change Mode & Permissions
+cd /opt/odoo17 \
+&& sudo mkdir zmc \
+&& sudo chmod -R +x zmc \
+&& sudo chown -R $USER zmc \
+&& cd zmc
+
+# Upload & Change the file permissions after upload
+sudo chmod -R +x dockerfile \
+		 entrypoint.sh \
+		 odoo.conf \
+		 wait-for-psql.py \
+		 docker-compose.yml
+
+/sudo chmod -R +x requirements.txt
+
+sudo chown -R $USER:root dockerfile \
+		 	 entrypoint.sh \
+		 	 odoo.conf \
+		 	 wait-for-psql.py \
+		 	 docker-compose.yml
+
+/sudo chown -R $USER:$USER requirements.txt
+
+# Pull the Latest Postgres Image One Time Only
+/docker pull postgres
+
+# Adjust dockerfile, entrypoint.sh & odoo.conf before build your Image
+docker build --no-cache -t zmc_odoo17_image_tag:17 .
+
+# Change the Image to My Targetted Image in the docker-compose.yml file
+# And other options as your above files (dockerfile, entrypoin.sh & odoo.conf) for both: db & Odoo
+docker-compose up -d
+
+docker exec -it zmc /bin/bash
+
+pip install python-barcode

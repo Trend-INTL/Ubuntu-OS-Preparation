@@ -1,0 +1,85 @@
+# Create PostgreSQL user for Odoo
+# sudo -u postgres psql -c "drop database $USER;"
+# sudo -u postgres psql -c "drop role #USER;"
+# sudo -u postgres createuser -d -R -S $USER
+# sudo -u postgres psql -c "ALTER ROLE erp WITH PASSWORD 'ERP.O@H.vps24';"
+# /sudo -u postgres psql -c "ALTER ROLE erp WITH PASSWORD NULL;"
+# sudo -u postgres psql -c "ALTER USER $USER WITH SUPERUSER;"
+# sudo -u postgres psql -c "create database $USER;"
+# sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $USER TO $USER;"
+# sudo service postgresql restart
+# sudo mkdir -p /home/uofdock/postgres-data
+# sudo mkdir -p /home/uofdock/odoo-data
+# sudo mkdir -p /opt/odoo16
+# sudo mkdir -p /opt/odoo16/addons
+# sudo git clone https://github.com/Trend-INTL/addons16.git /opt/odoo16/addons
+# cd /opt/odoo16/addons
+# sudo mkdir -p /opt/odoo16/test
+# cd /opt/odoo16/test
+# sudo nano docker-compose.yml
+---------------------------------------------------------------------------
+version: '3.8'
+networks:
+  nginx-network:
+    external: true  # Use your existing NPM network
+services:
+  db:
+    image: postgres:14.10
+    user: erp
+    container_name: postgres14.10-odoo-16-container
+    environment:
+      POSTGRES_USER=erp
+      POSTGRES_PASSWORD=ERP.O@H.vps24
+      POSTGRES_DB=postgres
+    restart: always             # run as a service
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - nginx-network
+
+  odoo16:
+    image: odoo:16
+    user: erp
+    depends_on:
+      - db
+    container_name: odoo16-docktest-container
+    ports:
+      - "8079:8069"
+      - "8072:8072" # live chat
+    tty: true
+    command: --
+    environment:
+      - HOST=db
+      - USER=erp
+      - PASSWORD=ERP.O@H.vps24
+    volumes:
+      - odoo16-data:/var/lib/odoo16
+      - ./extra_addons:/opt/odoo16/addons  # Mount extra_addons directory
+    restart: always             # run as a service
+    networks:
+      - nginx-network
+
+  pgadmin:
+    image: fenglc/pgadmin4
+    ports:
+      - 5050:5050
+    restart: always
+    links:
+      - db:db
+    environment:
+      DEFAULT_USER: admin
+      DEFAULT_PASSWORD: YbrS9eP4!j
+     # VIRTUAL_HOST: 
+     # LETSENCRYPT_HOST:
+     # VIRTUAL_PORT: 5050
+    volumes:
+      - ./pgadmin-data:/var/lib/pgadmin
+      #- /var/run/docker.sock:/tmp/docker.sock
+
+volumes:
+  postgres-data:
+  odoo-data:
+  pgadmin-data:
+---------------------------------------------------------------------------------------------------
+# docker-compose up -d
+

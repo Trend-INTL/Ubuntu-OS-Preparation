@@ -1,0 +1,326 @@
+# Script for installing Odoo 17.0 on Ubuntu 24.04
+# Author: AHMED OUF
+#-------------------------------------------------------------------------------
+# This script will install Odoo on your Ubuntu server. It can install multiple Odoo instances
+# in one Ubuntu because of the different xmlrpc_ports
+#-------------------------------------------------------------------------------
+# Login root or 
+# sudo su
+# cd ~
+# sudo apt install software-properties-common
+# sudo add-apt-repository ppa:deadsnakes/ppa
+# sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade
+# /sudo apt-get update
+# /sudo apt-get upgrade -y
+# sudo apt list | grep python3.10
+# sudo apt-get install python3.10
+# /sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 2
+# sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
+# sudo update-alternatives --config python3
+# /sudo nano /usr/bin/add-apt-repository
+# /Change the first line to ==>>> #!/usr/bin/python3.10 
+# python3 --version
+# sudo reboot
+# curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+# sudo python3.10 get-pip.py
+# pip --version
+# sudo reboot
+# /sudo apt install python3-pip
+# /sudo cp apt_pkg.cpython-312-x86_64-linux-gnu.so apt_pkg.so
+# sudo ln -s apt_pkg.cpython-312-x86_64-linux-gnu.so apt_pkg.so
+# /sudo apt install python3-pip --reinstall
+# pip install --upgrade pip 
+# sudo apt install -y git python3-pip python3-dev python3-dev libxml2-dev libxslt1-dev zlib1g-dev libsasl2-dev libldap2-dev build-essential libssl-dev libffi-dev libmysqlclient-dev libjpeg-dev libpq-dev libjpeg8-dev liblcms2-dev libblas-dev libatlas-base-dev
+---------------------------
+Vertual Python Environment:
+==========================
+/echo -e "\n #---Install Python3.10 & Update and upgrade the system---#"
+sudo apt update -y
+sudo apt upgrade -y
+
+# echo -e "\n #---# Install necessary dependencies---#"
+sudo apt install -y git build-essential wget python3-dev python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools gdebi-core libpq-dev
+
+# echo -e "\n #---Install Python 3.10 venv---#"
+sudo apt install -y python3.10 python3.10-venv
+
+------------------------------------------------------------------------------------------------------------------
+====================================================
+--------------------------------------
+INSTALL NODE JS NAD ITS REQUIREMENTS
+--------------------------------------
+sudo apt-get install nodejs npm -y
+/sudo apt install npm -y  ---------------->> install node java script
+sudo npm install -g less less-plugin-clean-css
+sudo npm fund
+/sudo npm cache clean --force       ------------>> to clean cache	===> sudo npm cache verify  <===
+sudo npm install -g n       ----------->>
+sudo n stable           --------->> install stable node js
+	sudo npm cache clean --force
+sudo npm install -g npm    ------------->>
+sudo npm install rtlcss -g    --------------->> install right to left node js library
+	 sudo npm fund
+sudo reboot
+
+-------------------------------------------------------------------------------------------------------------------------
+IINSTALL REQUIRED LIBRARIES FOR ODOO 16:
+---------------------------------------
+
+# Install Required Libraries for Postgresql
+# sudo apt install -y git build-essential wget python3-dev python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools gdebi-core libpq-dev
+# sudo apt update && sudo apt-get update && sudo apt upgrade && sudo apt-get upgrade
+OR:
+pip install psycopg2 Werkzeug passlib Pillow reportlab lxml decorator python-dateutil polib lxml_html_clean psutil docutils num2words pytz PyPDF2 babel idna requests greenlet pyproject.toml rjsmin
+pip install ebaysdk gevent ofxparse psycopg2 PyPDF2 python-ldap qrcode rjsmin vobject docopt
+
+-->> sudo apt-get install git python3-dev python3-pip python3-pypdf2 build-essential libxslt1-dev libxml2-dev libzip-dev libldap2-dev libldap2-dev libtiff5-dev libssl-dev libsasl2-dev liblcms2-dev libjpeg8-dev libopenjp2-7-dev zlib1g-dev libfreetype6-dev libwebp-dev libharfbuzz-dev libfribidi-dev libxcb1-dev libpq-dev
+-->> sudo apt-get install git libfontconfig1 libxrender1 fontconfig xfonts-base xfonts-75dpi libjpeg-turbo8  -------->> Install fonts libraries
+
+# Install Python dependencies with resolved versions
+pip install \
+    Babel==2.9.1 \
+    chardet==4.0.0 \
+    cryptography==3.4.8 \
+    decorator==4.4.2 \
+    docutils==0.17 \
+    ebaysdk==2.1.5 \
+    freezegun==1.1.0 \
+    geoip2==2.9.0 \
+    gevent==22.10.2 \
+    greenlet==2.0.2 \
+    idna==2.10 \
+    libsass==0.20.1 \
+    lxml==5.2.1 \
+    lxml_html_clean \
+    Jinja2 \
+    MarkupSafe==2.1.2 \
+    num2words==0.5.10 \
+    ofxparse==0.21 \
+    passlib==1.7.4 \
+    Pillow==9.4.0 \
+    polib==1.1.1 \
+    psutil==5.9.4 \
+    psycopg2-binary \
+    pydot==1.4.2 \
+    pyopenssl==21.0.0 \
+    PyPDF2 \
+    pyserial==3.5 \
+    python-dateutil==2.8.1 \
+    python3-ldap \
+    python-stdnum==1.17 \
+    pyusb==1.2.1 \
+    qrcode==7.3.1 \
+    reportlab==3.6.12 \
+    requests==2.25.1 \
+    rjsmin==1.1.0 \
+    urllib3==1.26.5 \
+    vobject==0.9.6.1 \
+    Werkzeug==2.0.2 \
+    xlrd==1.2.0 \
+    XlsxWriter==3.0.2 \
+    xlwt==1.3.* \
+    zeep==4.1.0
+
+pybabel --version
+sudo reboot
+
+----------------------------------------------------------------
+
+sudo apt install postgresql postgresql-contrib
+sudo systemctl status postgresql.service
+================================
+################################################################################
+
+sudo apt install mysql-server
+sudo systemctl status mysql.service
+sudo apt install mariadb-server
+sudo systemctl status mariadb.service
+sudo reboot
+
+#################################################################################
+
+#### Installing Docker Engine
+---------------------------------------------
+/# Add Docker's official GPG key:
+/sudo apt-get update
+/sudo apt-get install ca-certificates curl
+/sudo install -m 0755 -d /etc/apt/keyrings
+/sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+/sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+/echo \
+/  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+/  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+/  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+/sudo apt-get update
+/sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+/sudo docker run hello-world
+----------------------------------------------
+
+
+Follow the official Docker documentation for installing Docker Engine on Ubuntu: [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+
+# Install Docker dependencies
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+
+# Add Docker GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Add Docker repository
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io
+
+# Add your user to the docker group to run Docker commands without sudo
+sudo usermod -aG docker $USER
+groups $(whoami)
+
+
+#### Installing Docker Compose
+# Docker Compose simplifies the process of defining and running multi-container Docker applications.
+
+# Install Docker Compose (adjust version as needed)
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.28.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+-----------------------------------------------------
+/sudo apt-get update
+/sudo apt-get install docker-compose-plugin
+/sudo yum update
+/sudo yum install docker-compose-plugin
+/docker compose version
+/DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+/mkdir -p $DOCKER_CONFIG/cli-plugins
+/curl -SL https://github.com/docker/compose/releases/download/v2.28.1/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+------------------------------------------------------
+# Apply executable permissions to the binary
+sudo chmod +x /usr/local/bin/docker-compose
+sudo chown -R root:$USER /usr/local/bin/docker-compose
+
+# Verify installation
+docker-compose --version
+sudo docker run hello-world
+
+===================================================================================================================
+
+### 3. Setting Up Nginx Proxy Manager
+Nginx Proxy Manager helps manage Nginx configurations and reverse proxy settings for your multiple domains and subdomains.
+
+# Install Nginx Proxy Manager (using Docker Compose)
+# Create a docker-compose.yml file and configure Nginx Proxy Manager service
+sudo nano docker-compose.yml
+
+# Example 1 with volume Using docker-compose (Optional)
+version: '3'
+
+services:
+  app:
+    image: jc21/nginx-proxy-manager:latest # This is the most important command cause of it determined the IMAGE
+    container_name: npm
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"
+    volumes:
+      - /opt/docker/nginx/data:/data
+      - /opt/docker/nginx/letsencrypt:/etc/letsencrypt
+      - /opt/docker/nginx/npm-data:/app/data
+    networks:
+      npm:
+        ipv4_address: 172.18.0.2
+networks:
+  npm:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+
+---------------------------------------------------------
+# Example 2 without volume docker-compose.yml for Nginx Proxy Manager
+version: '3'
+
+services:
+  app:
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"
+    volumes:
+      - /opt/docker/nginx/data:/data
+      - /opt/docker/nginx/letsencrypt:/etc/letsencrypt
+-------------------------------------------------------
+# Start Nginx Proxy Manager
+docker-compose up -d
+sudo docker ps -a
+/docker-compose down
+
+/sudo docker volume create npm_data
+/sudo docker volume ls
+/sudo docker stop nginx-proxy-manager-app-1
+/sudo docker rm nginx-proxy-manager-1
+/sudo docker container update --volume-rm current_volume_name nginx-proxy-manager-app-1
+/sudo docker container update --volume npm_data:/data nginx-proxy-manager-app-1
+/sudo docker start nginx-proxy-manager-app-1
+
+----------------------------------------------------------------------------------------------------
+Default for Nginx Proxy Manager:
+Email: admin@example.com
+Pass: changeme
+
+sudo docker restart 97f2b325c342
+#Create a Docker Volume
+docker volume create nginx-proxy-manager-data
+
+# Run the Nginx Proxy Manager Container
+docker run -d \
+    -p 80:80 \
+    -p 443:443 \
+    -p 81:81 \
+    -v nginx-proxy-manager-data:/app/data \
+    --name nginx-proxy-manager \
+    jc21/nginx-proxy-manager:latest
+
+# Verify Volume Attachment
+docker volume inspect nginx-proxy-manager-data
+
+
+
+/sudo docker ps -a
+/docker-compose down
+
+=======================================================================================================
+
+Step 2: Install Portainer
+-------------------------
+
+/docker volume create portainer_data
+sudo docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+
+Now you can open Portainer Web APP through yourip:9000
+
+To Secure It==>>>
+
+Step 3: Configure Nginx Proxy Manager
+-------------------------------------
+0. Go to Portainer and in the footer you will find: Networks
+	Change Networks to Nginx Proxy Manager (As per Saved Pic) ===>> NOTE: It will change the IP Addess You Have To Change It in Portainer Proxy Host in Nginx Proxy Manager
+1. Access Nginx Proxy Manager Dashboard:
+2. Create a Proxy Host for Portainer:
+3. Configure Proxy Host Settings:
+
+Domain Names: Enter portainer.mydomain.org.
+Scheme: Select http.
+Forward Hostname/IP: Enter localhost.
+Forward Port: Enter 9000 (Portainer's default port)
+
+1. List All Docker Containers:
+sudo docker ps -a
+
+2. Identify the Portainer Container:
+
+3. sudo docker restart dd5e8de882c2
+
+docker-compose down
+

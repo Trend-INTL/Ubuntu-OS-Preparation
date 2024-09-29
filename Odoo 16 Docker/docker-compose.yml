@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: Test.O.D@h.Vps24
+      POSTGRES_DB: postgres
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data
+    networks:
+      - nginx-proxy-manager_default
+
+  odoo:
+    image: my_odoo16_image_tag:16
+    restart: always
+    depends_on:
+      - db
+    environment:
+      HOST: db
+      USER: test
+      PASSWORD: Test.O.D@h.Vps24
+    ports:
+      - "8069:8069"
+      - "8071:8072"       # Live Chat Port
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - ./etc:/etc/odoo
+    networks:
+      - nginx-proxy-manager_default
+
+networks:
+  nginx-proxy-manager_default:
+    external: true
+    internal: true
+
+volumes:
+  db_data:
+  odoo_data:

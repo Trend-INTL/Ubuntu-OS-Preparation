@@ -1,0 +1,13 @@
+mail.trend-ai.tech. 600 IN MX 10 mail.trend-ai.tech.
+mail.trend-ai.tech. 600 IN TXT "v=spf1 mx a:mail.trend-ai.tech ~all"
+_25._tcp.mail.trend-ai.tech. 86400 IN TLSA 2 1 1 0b9fa5a59eed715c26c1020c711b4f6ec42d58b0015e14337a39dad301c5afc3
+_25._tcp.mail.trend-ai.tech. 86400 IN TLSA 2 1 1 762195c225586ee6c0237456e2107dc54f1efc21f61a792ebd515913cce68332
+_imap._tcp.mail.trend-ai.tech. 600 IN SRV 0 0 0 .
+_pop3._tcp.mail.trend-ai.tech. 600 IN SRV 0 0 0 .
+_submission._tcp.mail.trend-ai.tech. 600 IN SRV 0 0 0 .
+_autodiscover._tcp.mail.trend-ai.tech. 600 IN SRV 10 1 443 mail.trend-ai.tech.
+_submissions._tcp.mail.trend-ai.tech. 600 IN SRV 10 1 465 mail.trend-ai.tech.
+_imaps._tcp.mail.trend-ai.tech. 600 IN SRV 10 1 993 mail.trend-ai.tech.
+_pop3s._tcp.mail.trend-ai.tech. 600 IN SRV 10 1 995 mail.trend-ai.tech.
+autoconfig.mail.trend-ai.tech. 600 IN CNAME mail.trend-ai.tech.
+autodiscover.mail.trend-ai.tech. 600 IN CNAME mail.trend-ai.tech.

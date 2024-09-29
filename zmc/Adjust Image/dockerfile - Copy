@@ -1,0 +1,30 @@
+# Start from the existing Odoo image
+FROM zmc_odoo17_image_tag:17
+
+# Define environment variables for user and directory
+ENV USER=zmc
+ENV DIRECTORY=/opt/odoo17/$USER
+
+# Create the user and group if they do not already exist
+RUN groupadd -r $USER && useradd -r -g $USER $USER
+
+# Ensure the directory exists # Change ownership of the directory # Adjust permissions for the directory
+RUN mkdir -p $DIRECTORY && \
+    chown -R $USER:$USER $DIRECTORY && \
+    chmod -R 755 $DIRECTORY
+
+# Switch to the created user
+USER $USER
+
+# (Optional) Copy your custom scripts or additional files
+# COPY my_script.sh /home/$USER/
+
+
+# Install Python packages in the virtual environment
+RUN pip install python-barcode
+
+# (Optional) Run custom setup scripts or commands
+# RUN /home/$USER/my_script.sh
+
+# The entrypoint or command should not need to be changed unless you're adding custom logic
+# ENTRYPOINT ["odoo"]

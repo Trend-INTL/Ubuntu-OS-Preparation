@@ -1,0 +1,15 @@
+# Use the official Odoo 16 image from Docker Hub
+FROM odoo:16
+
+# Expose Odoo port
+EXPOSE 8079
+
+# Set environment variables for database connection
+ENV DB_HOST=localhost
+ENV DB_PORT=5432
+
+# Copy custom addons if needed
+COPY ./addons /opt/odoo16/addons
+
+# Set entrypoint to start Odoo
+ENTRYPOINT ["odoo16-docker-test"]

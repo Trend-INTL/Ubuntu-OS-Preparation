@@ -1,0 +1,217 @@
+FROM debian:bullseye-slim
+MAINTAINER Odoo S.A. <info@odoo.com>
+
+SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
+
+# Generate locale C.UTF-8 for postgres and general locale data
+ENV LANG C.UTF-8
+
+# Retrieve the target architecture to install the correct wkhtmltopdf package
+ARG TARGETARCH
+
+# Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        dirmngr \
+        fonts-noto-cjk \
+        gnupg \
+        libssl-dev \
+        node-less \
+        npm \
+        python3-magic \
+        python3-num2words \
+        python3-odf \
+        python3-pdfminer \
+        python3-pip \
+        python3-phonenumbers \
+        python3-pyldap \
+        python3-qrcode \
+        python3-rendtestm \
+        python3-setuptools \
+        python3-slugify \
+        python3-vobject \
+        python3-watchdog \
+        python3-xlrd \
+        python3-xlwt \
+        xz-utils && \
+        Babel==2.9.1 \
+        chardet==4.0.0 \
+        cryptography==3.4.8 \
+        decorator==4.4.2 \
+        docutils==0.17 \
+        ebaysdk==2.1.5 \
+        freezegun==1.1.0 \
+        geoip2==2.9.0 \
+        gevent==22.10.2 \
+        greenlet==2.0.2 \
+        idna==2.10 \
+        libsass==0.20.1 \
+        lxml==5.2.1 \
+        lxml_html_clean \
+        Jinja2 \
+        MarkupSafe==2.1.2 \
+        num2words==0.5.10 \
+        ofxparse==0.21 \
+        passlib==1.7.4 \
+        Pillow==9.4.0 \
+        polib==1.1.1 \
+        psutil==5.9.4 \
+        psycopg2-binary \
+        pydot==1.4.2 \
+        pyopenssl==21.0.0 \
+        PyPDF2 \
+        pyserial==3.5 \
+        python-dateutil==2.8.1 \
+        python3-ldap \
+        python-stdnum==1.17 \
+        pyusb==1.2.1 \
+        qrcode==7.3.1 \
+        reportlab==3.6.12 \
+        requests==2.25.1 \
+        rjsmin==1.1.0 \
+        urllib3==1.26.5 \
+        vobject==0.9.6.1 \
+        Werkzeug==2.0.2 \
+        xlrd==1.2.0 \
+        XlsxWriter==3.0.2 \
+        xlwt==1.3.* \
+        zeep==4.1.0 \
+        html2text \
+        boto3 \
+        dropbox \
+        pyncclient \
+        nextcloud-api-wrapper \
+        python3-dateutil \
+        python3-decorator \
+        python3-gevent \
+        python3-stdnum \
+        python3-watchdog \
+        python3-ldap3 \
+        python3-markupsafe \
+        python3-markdown \
+        python3-gdata \
+        python3-openid \
+        python3-netifaces \
+        python3-usb \
+        python3-dbus \
+        python3-pillow \
+        python3-reportlab-accel \
+        python3-pychart \
+        python3-soappy \
+        python3-pysftp \
+        python3-geoip \
+        python3-xlrd \
+        python3-paramiko \
+        python3-pytest \
+        python3-unittest2 \
+        python3-oauthlib \
+        python3-geojson \
+        python3-sqlparse \
+        python3-polib \
+        python3-babel \
+        python3-feedparser \
+        python3-docutils \
+        python3-jinja2 \
+        python3-ldap \
+        python3-libxslt1 \
+        python3-lxml \
+        python3-mako \
+        python3-mock \
+        python3-openssl \
+        python3-passlib \
+        python3-pil \
+        python3-psutil \
+        python3-psycopg2 \
+        python3-pydot \
+        python3-pyparsing \
+        python3-pyPdf \
+        python3-pypdf2 \
+        python3-pypng \
+        python3-pytils \
+        python3-reportlab \
+        python3-requests \
+        python3-serial \
+        python3-setuptools \
+        python3-simplejson \
+        python3-suds \
+        python3-vatnumber \
+        python3-vobject \
+        python3-werkzeug \
+        python3-xlwt \
+        python3-yaml \
+        python3-webdav \
+        python3-qrcode \
+        python3-phonenumbers \
+        python3-num2words \
+        python3-matplotlib \
+        python3-flake8 \
+        paramiko \
+    if [ -z "${TARGETARCH}" ]; then \
+        TARGETARCH="$(dpkg --print-architecture)"; \
+    fi; \
+    WKHTMLTOPDF_ARCH=${TARGETARCH} && \
+    case ${TARGETARCH} in \
+    "amd64") WKHTMLTOPDF_ARCH=amd64 && WKHTMLTOPDF_SHA=9df8dd7b1e99782f1cfa19aca665969bbd9cc159  ;; \
+    "arm64")  WKHTMLTOPDF_SHA=58c84db46b11ba0e14abb77a32324b1c257f1f22  ;; \
+    "ppc64le" | "ppc64el") WKHTMLTOPDF_ARCH=ppc64el && WKHTMLTOPDF_SHA=7ed8f6dcedf5345a3dd4eeb58dc89704d862f9cd  ;; \
+    esac \
+    && curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bullseye_${WKHTMLTOPDF_ARCH}.deb \
+    && echo ${WKHTMLTOPDF_SHA} wkhtmltox.deb | sha1sum -c - \
+    && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
+    && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
+
+# install latest postgresql-client
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
+    && GNUPGHOME="$(mktemp -d)" \
+    && export GNUPGHOME \
+    && repokey='B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8' \
+    && gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "${repokey}" \
+    && gpg --batch --armor --export "${repokey}" > /etc/apt/trusted.gpg.d/pgdg.gpg.asc \
+    && gpgconf --kill all \
+    && rm -rf "$GNUPGHOME" \
+    && apt-get update  \
+    && apt-get install --no-install-recommends -y postgresql-client \
+    && rm -f /etc/apt/sources.list.d/pgdg.list \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install rtlcss (on Debian buster)
+RUN npm install -g rtlcss
+
+# Install Odoo
+ENV ODOO_VERSION 16.0
+ARG ODOO_RELEASE=20240711
+ARG ODOO_SHA=0d16aea37be116a0fd07fc13c9c29a244737b419
+RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
+    && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
+    && apt-get update \
+    && apt-get -y install --no-install-recommends ./odoo.deb \
+    && rm -rf /var/lib/apt/lists/* odoo.deb
+
+# Copy entrypoint script and Odoo configuration file
+COPY ./entrypoint.sh /opt/odoo16/erp
+COPY ./odoo.conf /opt/odoo16/erp
+
+# Set permissions and Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
+RUN chown test /opt/odoo16/erp/odoo.conf \
+    && chmod +x /opt/odoo16/erp/odoo.conf \
+    && mkdir -p /opt/odoo16/erp/addons \
+    && chmod -R +x /opt/odoo16/erp/addons \
+    && chown -R erp /opt/odoo16/erp/addons
+
+VOLUME ["/addons", "/opt/odoo16/erp/addons"]
+
+# Expose Odoo services
+EXPOSE 8077 8071 8072
+
+# Set the default config file
+ENV ODOO_RC /opt/odoo16/erp/odoo.conf
+
+COPY wait-for-psql.py /usr/local/bin/wait-for-psql.py
+
+# Set default user when running the container
+USER test
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["odoo"]

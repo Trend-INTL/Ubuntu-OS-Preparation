@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mntmoddb:
+    image: postgres:latest
+    container_name: mntmoddb
+    ports:
+      - "5437:5432"      # HTTP
+    environment:
+      POSTGRES_USER: modoboa
+      POSTGRES_PASSWORD: modoboa
+    volumes:
+      - /opt/odoo17/mnt/modoboa/moddb:/var/lib/postgresql/data
+    networks:
+      mntmodoboa:
+        ipv4_address: 172.33.0.2
+
+  mntmodoboa:
+    image: palidin/modoboa:latest 	# docker pull palidin/modoboa
+    container_name: mntmodoboa
+    ports:
+      - "80:80"      # HTTP
+      - "443:443"    # HTTPS
+      - "2525:25"      # SMTP
+      - "587:587"    # SMTP submission
+      - "993:993"    # IMAP
+      - "995:995"    # POP3
+      - "8000:8000"  # Access Port
+    privileged: true
+    environment:
+      HOST: mntmoddb
+      hostname: mail.trend-ai.tech
+      POSTGRES_PASSWORD: modoboa
+      MODBOA_ADMIN_PASSWORD: modoboa
+    volumes:
+      - /opt/odoo17/mnt/modoboa/data/modoboa/postgresql:/var/spool/postfix
+      - /opt/odoo17/mnt/modoboa/data/modoboa/database:/var/lib/postgresql
+      - /opt/odoo17/mnt/modoboa/data/modoboa/vmail:/srv/vmail
+    networks:
+      mntmodoboa:
+        ipv4_address: 172.33.0.3
+
+
+networks:
+  mntmodoboa:
+    driver: bridge
+    ipam:
+         config:
+           - subnet: 172.33.0.0/16

@@ -1,0 +1,31 @@
+docker exec -it mnt /bin/sh
+cat /etc/odoo/odoo.conf | grep websocket
+
+
+[options]
+websocket_port = 8073
+
+mkdir afrah-conf & sudo chown -R $USER:$USER afrah-conf && sudo chmod -R 755 afrah-conf
+mkdir mnt-conf & sudo chown -R $USER:$USER mnt-conf && sudo chmod -R 755 mnt-conf
+
+=======================================VERY IMPORTANT NOTE====================================
+I Have To Copy odoo.conf Manually To The New Folder afrah-conf
+
+
+
+    ports:
+      - "8269:8069"
+      - "8272:8072"
+      - "8273:8073"
+      - "8271:8071"
+    volumes:
+      - /opt/odoo17/afrah/afrah-data:/var/lib/odoo
+      - /opt/odoo17/afrah/afrah-addons:/mnt/extra-addons
+      - /opt/odoo17/afrah/afrah-conf:/etc/odoo
+
+
+cd /opt/odoo17/afrah
+docker-compose down
+docker-compose up -d
+
+

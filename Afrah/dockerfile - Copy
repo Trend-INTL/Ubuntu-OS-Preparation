@@ -1,0 +1,26 @@
+# Base image
+FROM zmc_odoo17_image_tag:17
+
+# Switch to root user to perform administrative tasks
+USER root
+
+# Create a user with specific UID and GID
+RUN useradd afrah
+
+# Update the group and user
+RUN groupmod -g 1002 afrah && usermod -u 1002 afrah
+
+# Switch to this user
+USER afrah
+
+=========================================
+
+FROM ubuntu:20.04
+
+ARG PUID=1000
+ARG PGID=1000
+
+RUN groupadd -g ${PGID} mygroup && \
+    useradd -u ${PUID} -g mygroup -m myuser
+
+USER myuser

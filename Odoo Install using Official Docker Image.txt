@@ -1,0 +1,89 @@
+cd /opt
+sudo mkdir odoo17
+sudo chmod -R +x odoo17
+sudo chown -R $USER:$USER odoo17
+cd odoo17
+sudo mkdir $USER
+sudo chmod -R +x $USER
+sudo chown -R $USER:$USER $USER
+ll
+cd $USER
+
+sudo nano dockerfile
+sudo nano entrypoint.sh
+sudo nano odoo.conf
+sudo nano wait-for-psql.py
+sudo nano requirements.txt
+sudo nano docker-compose.yml
+
+sudo chmod -R +x dockerfile
+sudo chmod -R +x entrypoint.sh
+sudo chmod -R +x odoo.conf
+sudo chmod -R +x wait-for-psql.py
+sudo chmod -R +x requirements.txt
+sudo chmod -R +x docker-compose.yml
+
+sudo chown -R $USER:$USER dockerfile
+sudo chown -R $USER:$USER entrypoint.sh
+sudo chown -R $USER:$USER odoo.conf
+sudo chown -R $USER:$USER wait-for-psql.py
+sudo chown -R $USER:$USER requirements.txt
+sudo chown -R $USER:$USER docker-compose.yml
+
+docker pull postgres   ===>> First Time Only
+
+/docker run --name db -e POSTGRES_DB=postgres -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo -p 5432:5432 -d postgres
+docker run --name db -v odoo-db:/var/lib/postgresql/data -e POSTGRES_DB=postgres -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo -p 5432:5432 -d postgres
+/docker run --name db1 -e POSTGRES_DB=postgres -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo -p 5433:5432 -d postgres ==>>> DB for Odoo 17
+docker run --name zmcdb -v zmcdb:/var/lib/postgresql/data -e POSTGRES_DB=postgres -e POSTGRES_USER=$USER -e POSTGRES_PASSWORD=$USER -p 5434:5432 -d postgres
+docker run --name odoo17db -v ./postgresql:/var/lib/postgresql/data -e POSTGRES_DB=postgres -e POSTGRES_USER=$USER -e POSTGRES_PASSWORD=$USER -p 5433:5432 -d postgres
+docker run --name odoo17db -v ./postgresql:/var/lib/postgresql/data -e POSTGRES_DB=postgres -e POSTGRES_USER=$USER -e POSTGRES_PASSWORD=$USER -p 5433:5432 -d postgres
+docker run --name mntdb -v ./postgresql:/var/lib/postgresql/data -e POSTGRES_DB=postgres -e POSTGRES_USER=$USER -e POSTGRES_PASSWORD=$USER -p 5434:5432 -d postgres
+sudo chmod -R +x postgresql
+sudo chown -R $USER postgresql
+
+------//$ docker run -d -e POSTGRES_USER=$USER -e POSTGRES_PASSWORD=$USER -e POSTGRES_DB=postgres --name db postgres:15//-------------
+docker build --no-cache -t official_odoo16_image_tag:16 .
+docker build --no-cache -t $USER_odoo17_image_tag:17 .   	====> We have to change the DB name in all files (entrypoint.sh, Docker run Command & etc...) to db1
+docker build --no-cache -t my_odoo17_image_tag:17 .
+docker build --no-cache -t official_odoo17_image_tag:17 .
+/docker build -t zmc_odoo17_tag:17 .
+
+docker run -p 8069:8069 --name odoo16 --link db:db -t official_odoo16_image_tag:16
+docker run -p 8079:8079 --name odoo17 --link db1:db1 -t official_odoo17_image_tag:17
+docker run -p 8075:8075 -v zmc-data:/var/lib/odoo -v zmc-addons:/mnt/extra-addons --name zmc --link zmcdb:zmcdb -t zmc_odoo17_image_tag:17
+docker run -p 8075:8075 -v zmc-data:/var/lib/odoo -v zmc-addons:/mnt/extra-addons --name zmc --link zmcdb:zmcdb -t zmc_odoo17_tag:17
+docker run -p 8078:8078 -v ./odoo-data:/var/lib/odoo -v ./addons:/mnt/extra-addons --name zmc --link zmcdb:zmcdb -t my_odoo17_image_tag:17
+docker run -p 8076:8069 -v ./odoo-data:/var/lib/odoo -v ./addons:/mnt/extra-addons --name odoo17 --link odoo17db:odoo17db -t my_odoo17_image_tag:17
+docker run -u odoo -p 8074:8074 -v ./odoo-data:/var/lib/odoo -v ./addons:/mnt/extra-addons --name mnt --link mntdb:mntdb -t official_odoo17_image_tag:17
+
+/PermissionError: [Errno 13] Permission denied: '/var/lib/odoo/sessions'
+
+
+
+docker run -u myuser -d --name my_container my_image
+
+docker exec -it 140e1c5c795ac13e34fdd659b6e0e3bddb749d6d1694b7978e59b40d8f0c3ba7 /bin/bash
+ls
+cd /mnt/extra-addons
+sudo ls -ld /var/lib/docker/volumes/zmc-addons/_data
+sudo chmod -R 755 /var/lib/docker/volumes/zmc-addons/_data
+sudo chown -R $USER:$USER /var/lib/docker/volumes/zmc-addons/_data
+docker exec -it 140e1c5c795ac13e34fdd659b6e0e3bddb749d6d1694b7978e59b40d8f0c3ba7 /bin/bash
+ls -l /mnt/extra-addons
+
+groups $(whoami)
+docker exec -it odoo17 whoami
+
+
+
+
+odoo: addons paths: ['/usr/lib/python3/dist-packages/odoo/addons', '/var/lib/odoo/addons/17.0', '/mnt/extra-addons']
+cd /home/$USER/.local/share/Odoo/addons
+sudo chmod -R +x 17.0
+sudo chown -R $USER:$USER 17.0
+ll
+cd /home/$USER/.local/share/Odoo/addons/17.0
+
+docker exec -it odoo17 /bin/bash
+

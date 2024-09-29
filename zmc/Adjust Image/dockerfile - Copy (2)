@@ -1,0 +1,12 @@
+# Base image
+FROM my_odoo17_image_tag:17
+
+# Create a user with specific UID and GID
+RUN groupadd -g 1002 zmc && useradd -u 1002 -g zmc -m zmc
+
+# Switch to this user
+USER zmc
+
+# Continue with any additional configuration if needed
+# Install Python packages in the virtual environment
+RUN pip install python-barcode

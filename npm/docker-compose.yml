@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  npm:
+    image: jc21/nginx-proxy-manager:latest # This is the most important command cause of it determined the IMAGE
+    container_name: npm
+    restart: unless-stopped
+    ports:
+      - "880:80"
+      - "8443:443"
+      - "881:81"
+    volumes:
+      - /opt/docker/nginx/data:/data
+      - /opt/docker/nginx/letsencrypt:/etc/letsencrypt
+      - /opt/docker/nginx/npm-data:/app/data
+    networks:
+      npm:
+        ipv4_address: 172.77.0.2
+networks:
+  npm:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.77.0.0/16

@@ -1,0 +1,15 @@
+# Base image
+FROM zmc_odoo17_image_tag:17
+
+# Switch to root user to perform administrative tasks
+USER root
+
+# Create a user with specific UID and GID
+RUN groupadd -g 1001 afrah && useradd -u 1001 -g afrah -m afrah
+
+# Switch to this user
+USER afrah
+
+# Continue with any additional configuration if needed
+# Install Python packages in the virtual environment
+# RUN pip install python-barcode	 # Already Install in the Origin Image

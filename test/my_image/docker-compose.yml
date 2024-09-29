@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  odoodb:
+    image: postgres:latest
+    container_name: odoodb
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: "odoo"
+      POSTGRES_DB: odoo
+    ports:
+      - "5435:5432"
+    volumes:
+      - /opt/odoo17/afrah/afrahdb:/var/lib/postgresql/data
+    networks:
+      afrah:
+        ipv4_address: 172.33.0.2
+
+  afrah:
+    image: afrah_odoo17_image_tag:17
+    container_name: afrah
+    depends_on:
+      - afrahdb
+    environment:
+      HOST: odoodb
+      USER: odoo
+      PASSWORD: "odoo"
+      DB_NAME: odoo
+    ports:
+      - "8269:8069"
+      - "8272:8072"
+      - "8273:8073"
+      - "8271:8071"
+    volumes:
+      - /opt/odoo17/afrah/afrah-data:/var/lib/odoo
+      - /opt/odoo17/afrah/afrah-addons:/mnt/extra-addons
+      - /opt/odoo17/afrah/afrah-conf:/etc/odoo
+    networks:
+      afrah:
+        ipv4_address: 172.33.0.3
+
+networks:
+  afrah:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.33.0.0/16

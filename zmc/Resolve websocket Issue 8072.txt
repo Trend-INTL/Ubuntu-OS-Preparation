@@ -1,0 +1,97 @@
+When using Odoo with Docker, the issue with WebSocket binding typically involves Docker's network configuration or the setup of your Odoo container. Here’s how to address WebSocket-related issues in a Dockerized Odoo environment:
+
+### 1. **Check Docker Container Port Mapping**
+
+Ensure that the Docker container is correctly mapping the WebSocket port (default 8072). You can check the port mappings by inspecting the container:
+
+```bash
+docker ps
+```
+
+You should see a line like:
+
+```
+0.0.0.0:8072->8072/tcp
+```
+
+If it’s missing, adjust your `docker-compose.yml` or Docker run command to expose and map the port correctly.
+
+### 2. **Update `docker-compose.yml`**
+
+If you’re using `docker-compose`, make sure the `docker-compose.yml` file includes port mappings for WebSocket:
+
+```yaml
+services:
+  odoo:
+    image: odoo:latest
+    ports:
+      - "8069:8069" # Odoo's HTTP port
+      - "8072:8072" # WebSocket port
+    ...
+```
+
+### 3. **Check Docker Network Settings**
+
+Verify that the Docker network settings allow communication on the WebSocket port. If you're using a custom network, ensure that it’s properly configured:
+
+```bash
+docker network ls
+docker network inspect <network_name>
+```
+
+### 4. **Verify Odoo Configuration**
+
+Ensure that your Odoo configuration (`odoo.conf`) is correctly set up for WebSocket support. Verify that the configuration file inside the container is correctly set to use the WebSocket port:
+
+```ini
+[options]
+websocket_port = 8072
+```
+
+You can access and edit the configuration inside the container using:
+
+```bash
+docker exec -it <container_id> /bin/bash
+```
+
+### 5. **Check Docker Logs**
+
+Inspect the logs of your Odoo container for any specific errors or issues related to WebSocket:
+
+```bash
+docker logs <container_id>
+```
+
+Look for any relevant error messages that might indicate issues with WebSocket connections.
+
+### 6. **Reverse Proxy Configuration**
+
+If you're using a reverse proxy (like Nginx) to handle HTTP and WebSocket traffic, ensure that it is configured to correctly forward WebSocket connections. For Nginx, you need to ensure that WebSocket upgrade headers are set:
+
+```nginx
+location /websocket {
+    proxy_pass http://odoo:8072;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+}
+```
+
+### 7. **Container Health and Restart**
+
+Sometimes, simply restarting the Odoo container can resolve transient issues:
+
+```bash
+docker restart <container_id>
+```
+
+### 8. **Network and Proxy Settings**
+
+If you have custom network or proxy settings, make sure they are not interfering with the WebSocket connections. For example, ensure that no other service is occupying the same port or causing conflicts.
+
+### 9. **Consult Odoo Docker Documentation**
+
+Refer to the [official Odoo Docker documentation](https://www.odoo.com/documentation/16.0/setup/deploy.html#docker) for additional guidance on setting up and troubleshooting Odoo with Docker.
+
+By following these steps, you should be able to address and resolve the WebSocket binding issue in your Dockerized Odoo setup. If you’re still facing issues, providing specific details about your `docker-compose.yml`, reverse proxy configuration, and any error logs can help in further diagnosing the problem.

@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:12
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: odoo_user
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: database1,database2  # Replace with your database names
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  odoo:
+    image: my-odoo:16  # Replace with your Odoo image name and tag
+    container_name: odoo-container
+    ports:
+      - "8069:8069"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: odoo_user
+      DB_PASSWORD: your_password
+      DB_NAME: database1,database2  # Replace with your database names
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:

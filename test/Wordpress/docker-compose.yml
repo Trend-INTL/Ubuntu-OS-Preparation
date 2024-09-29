@@ -1,0 +1,72 @@
+# create a local .env file with the following 4 properties:
+#
+# MYSQL_DATABASE=<something>
+# MYSQL_USER=<something>
+# MYSQL_PASSWORD=<something>
+# MYSQL_ROOT_PASSWORD=<something>
+#
+# Note: I have had a LOT of issues working with anything newer then Docker Desktop v4.26.1
+#   If you're on something newer, then double check against this release.
+#
+# I also have a video going through this here: https://www.youtube.com/watch?v=gEceSAJI_3s
+
+version: "3.8"
+
+services:
+
+  wp1_db:
+    # We use a mariadb image which supports both amd64 & arm64 architecture
+    image: mariadb:latest
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: '${MYSQL_DATABASE}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+    volumes:
+      - /opt/docker/test1/db-data:/var/lib/mysql
+    networks:
+      - wp1-network
+    deploy:
+      resources:
+        limits:
+          memory: 2048m
+
+  wp1_phpmyadmin:
+    depends_on:
+      - wp1_db
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 8881:80
+    env_file: .env
+    environment:
+      PMA_HOST: wp1_db
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+    networks:
+      - wp1-network
+
+  wp1:
+    depends_on:
+      - wp1_db
+    image: wordpress:latest
+    restart: unless-stopped
+    ports:
+      - 8880:80
+    env_file: .env
+    environment:
+      WORDPRESS_DB_HOST: wp1_db:3306 # use the same name as database service
+      WORDPRESS_DB_NAME: '${MYSQL_DATABASE}'
+      WORDPRESS_DB_USER: '${MYSQL_USER}'
+      WORDPRESS_DB_PASSWORD: '${MYSQL_PASSWORD}'
+    volumes:
+      - /opt/docker/test1/wp-data:/var/www/html
+    networks:
+      - wp1-network
+
+networks:
+  wp1-network:
+    driver: bridge

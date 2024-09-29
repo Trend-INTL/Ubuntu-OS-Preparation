@@ -1,0 +1,15 @@
+trend-ai.tech. 600 IN MX 10 mail.trend-ai.tech.
+trend-ai.tech. 600 IN TXT "v=spf1 mx a:mail.trend-ai.tech ~all"
+dkim._domainkey.trend-ai.tech. 600 IN TXT "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnaiSHkktjk9ekyIkHVYyLFW1y6kOh8MSCa/uJyLZNmqceztVi7shU+fH4BiBItx6/P1yVsUKeoZIf87njRsATdQhxDnXVJMpkIcAQT2wYzllYvKxM2pV0RzH/6A+IqZfN2sUtHSIvtFbOBaCL5HTJBPgpt4D+H2vdnvoBOhBobG63rCdzeN+jsX5Nd5r" "WuhEMpRCZME84eRwAXTy8RicS8nI11vUC2jQebrmRR/hXpxADgPXJ/9wd5bBnYxp38PA+6Qp1s/Aqnl4qVRcQOV3QCsyjZHuJCsTFnlRGNWHddk/8H6SMK/pLYoMSP1VOWMKJrG5WkZjXKhTOrd98sL0LQIDAQAB"
+_dmarc.trend-ai.tech. 600 IN TXT "v=DMARC1; p=reject; rua=mailto:admin@trend-ai.tech; ruf=mailto:admin@trend-ai.tech; adkim=s; aspf=s"
+_25._tcp.mail.trend-ai.tech. 86400 IN TLSA 2 1 1 0b9fa5a59eed715c26c1020c711b4f6ec42d58b0015e14337a39dad301c5afc3
+_25._tcp.mail.trend-ai.tech. 86400 IN TLSA 2 1 1 762195c225586ee6c0237456e2107dc54f1efc21f61a792ebd515913cce68332
+_imap._tcp.trend-ai.tech. 600 IN SRV 0 0 0 .
+_pop3._tcp.trend-ai.tech. 600 IN SRV 0 0 0 .
+_submission._tcp.trend-ai.tech. 600 IN SRV 0 0 0 .
+_autodiscover._tcp.trend-ai.tech. 600 IN SRV 10 1 443 mail.trend-ai.tech.
+_submissions._tcp.trend-ai.tech. 600 IN SRV 10 1 465 mail.trend-ai.tech.
+_imaps._tcp.trend-ai.tech. 600 IN SRV 10 1 993 mail.trend-ai.tech.
+_pop3s._tcp.trend-ai.tech. 600 IN SRV 10 1 995 mail.trend-ai.tech.
+autoconfig.trend-ai.tech. 600 IN CNAME mail.trend-ai.tech.
+autodiscover.trend-ai.tech. 600 IN CNAME mail.trend-ai.tech.

@@ -1,0 +1,31 @@
+# 1- To setup the configuration file GoTo:
+https://setup.mailu.io/2024.06/
+# Please see the word file
+
+# 2- Step 1 - Download your configuration files
+sudo mkdir /opt/mailu
+
+sudo chown -R $USER:$USER /opt/mailu && sudo chmod -R 700 /opt/mailu && cd /opt/mailu
+
+wget https://setup.mailu.io/2024.06/file/1c7cacf6-dc32-40cb-be72-b5447b25902a/docker-compose.yml
+wget https://setup.mailu.io/2024.06/file/1c7cacf6-dc32-40cb-be72-b5447b25902a/mailu.env
+
+# 3- Step 2 - Review the configuration
+sudo nano docker-compose.yml
+sudo nano mailu.env
+
+# 4- Step 3 - Start the Compose project
+cd /mailu
+docker compose -p mailu up -d
+
+# 5- Before you can use Mailu, you must create the primary administrator user account. This should be admin@trend-ai.tech. Use the following command, changing PASSWORD to your liking:
+docker compose -p mailu exec admin flask mailu admin admin mail.trend-ai.tech admin
+
+Type	Name	Content		TTL	Proxy status
+A	mail	195.35.28.250	Auto	DNS only
+A	@	195.35.28.250	Auto	DNS only		# Main Domani
+
+
+# Login to the admin interface to change the password for a safe one, at one of the hostnames mail.trend-ai.tech. Also, choose the "Update password" option in the left menu.
+admin admin@mail.trend-ai.tech admin
+

@@ -1,0 +1,43 @@
+# Step2 Pull the repository
+$ docker pull palidin/modoboa:latest
+
+
+# Step3 Copy files from container
+# now you should create a directory to storage modoboa data, like /data/modoboa, and use an temporary container to get neccessary files
+
+/data/modoboa/postfix postfix directory
+/data/modoboa/postgresql database directory
+/data/modoboa/vmail mail directory
+$ docker run --it --name=temp --rm palidin/modoboa:latest
+$ mkdir -p ./data/modoboa
+$ docker cp temp:/var/spool/postfix ./data/modoboa/postfix
+$ docker cp temp:/var/lib/postgresql ./data/modoboa/postgresql
+$ docker cp temp:/srv/vmail ./data/modoboa/vmail
+$ docker stop temp
+
+# Step4 Run modoboa service
+create a file like mail.yml, and fill with content, example.com is your host
+
+version: '2'
+
+services:
+  mail:
+    image: palidin/modoboa:latest
+    hostname: example.com
+    container_name: modoboa
+    ports:
+    - "25:25"
+    - "110:110"
+    - "143:143"
+    - "8000:8000"
+    privileged: true
+    volumes:
+    - /data/modoboa/postgresql:/var/spool/postfix
+    - /data/modoboa/database:/var/lib/postgresql
+    - /data/modoboa/vmail:/srv/vmail
+
+# Step5 Start it:
+$ docker-compose -f mail.yml up -d
+
+
+

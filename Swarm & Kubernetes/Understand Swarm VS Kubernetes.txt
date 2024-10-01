@@ -1,3 +1,136 @@
+Configure remote access for Docker daemon
+By default, the Docker daemon listens for connections on a Unix socket to accept requests from local clients. You can configure Docker to accept requests from remote clients by configuring it to listen on an IP address and port as well as the Unix socket.
+
+Warning
+
+Configuring Docker to accept connections from remote clients can leave you vulnerable to unauthorized access to the host and other attacks.
+
+It's critically important that you understand the security implications of opening Docker to the network. If steps aren't taken to secure the connection, it's possible for remote non-root users to gain root access on the host.
+
+Remote access without TLS is not recommended, and will require explicit opt-in in a future release. For more information on how to use TLS certificates to secure this connection, see Protect the Docker daemon socket.
+
+Enable remote access
+You can enable remote access to the daemon either using a docker.service systemd unit file for Linux distributions using systemd. Or you can use the daemon.json file, if your distribution doesn't use systemd.
+
+Configuring Docker to listen for connections using both the systemd unit file and the daemon.json file causes a conflict that prevents Docker from starting.
+
+Configuring remote access with systemd unit file
+Use the command sudo systemctl edit docker.service to open an override file for docker.service in a text editor.
+
+Add or modify the following lines, substituting your own values.
+
+
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://127.0.0.1:2375
+Save the file.
+
+Reload the systemctl configuration.
+
+
+ sudo systemctl daemon-reload
+Restart Docker.
+
+
+ sudo systemctl restart docker.service
+Verify that the change has gone through.
+
+
+ sudo netstat -lntp | grep dockerd
+tcp        0      0 127.0.0.1:2375          0.0.0.0:*               LISTEN      3758/dockerd
+Configuring remote access with daemon.json
+Set the hosts array in the /etc/docker/daemon.json to connect to the Unix socket and an IP address, as follows:
+
+
+{
+  "hosts": ["unix:///var/run/docker.sock", "tcp://127.0.0.1:2375"]
+}
+Restart Docker.
+
+Verify that the change has gone through.
+
+
+ sudo netstat -lntp | grep dockerd
+tcp        0      0 127.0.0.1:2375          0.0.0.0:*             
+
+Allow access to the remote API through a firewall
+If you run a firewall on the same host as you run Docker, and you want to access the Docker Remote API from another remote host, you must configure your firewall to allow incoming connections on the Docker port. The default port is 2376 if you're using TLS encrypted transport, or 2375 otherwise.
+
+Two common firewall daemons are:
+
+Uncomplicated Firewall (ufw), often used for Ubuntu systems.
+firewalld, often used for RPM-based systems.
+Consult the documentation for your OS and firewall. The following information might help you get started. The settings used in this instruction are permissive, and you may want to use a different configuration that locks your system down more.
+
+For ufw, set DEFAULT_FORWARD_POLICY="ACCEPT" in your configuration.
+
+For firewalld, add rules similar to the following to your policy. One for incoming requests, and one for outgoing requests.
+
+
+<direct>
+  [ <rule ipv="ipv6" table="filter" chain="FORWARD_direct" priority="0"> -i zt0 -j ACCEPT </rule> ]
+  [ <rule ipv="ipv6" table="filter" chain="FORWARD_direct" priority="0"> -o zt0 -j ACCEPT </rule> ]
+</direct>
+Make sure that the interface names and chain names are correct
+
+========================================================================================================================================
+
+BUT THE MORE PRACTICAL & EASY IS TO CONNECT USING EDGE AGENT:
+------------------------------------------------------------
+
+Portainer offers two types of Edge Agents: **Edge Agent Standard** and **Edge Agent Async**. Here's a brief overview of each:
+
+### Edge Agent Standard
+- **Connection Type**: Uses a persistent connection (WebSocket) to communicate with the Portainer server.
+- **Use Case**: Ideal for scenarios where you need real-time monitoring and management of edge devices.
+- **Performance**: Provides immediate updates and commands, making it suitable for applications that require constant connectivity.
+
+### Edge Agent Async
+- **Connection Type**: Utilizes a more flexible, asynchronous communication method, typically relying on a polling mechanism.
+- **Use Case**: Better suited for environments with intermittent connectivity or where real-time communication is not critical.
+- **Performance**: Can handle temporary network outages gracefully, as it doesn't require a constant connection.
+
+### Key Differences
+- **Connectivity**: Standard is real-time, Async is more resilient to disruptions.
+- **Resource Usage**: Standard may use more resources due to its persistent connection, while Async is lighter on resource demands.
+- **Deployment**: Choose Standard for critical applications and Async for more flexible, less time-sensitive environments.
+
+### Summary
+Select **Edge Agent Standard** for immediate, real-time management needs and **Edge Agent Async** for scenarios where connectivity might be unreliable. Your choice depends on your specific use case and operational requirements.
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+# ADD ENVIRONMENT =>> DOCKER STANDALONE =>> EDGE AGENT STANDARD
+
+# Then RUN the Following Command on the Portainer Server:
+ 
+docker run -d \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /var/lib/docker/volumes:/var/lib/docker/volumes \
+  -v /:/host \
+  -v portainer_agent_data:/data \
+  --restart always \
+  -e EDGE=1 \
+  -e EDGE_ID=0df91772-a68d-4d21-9993-2607d5aa84a3 \
+  -e EDGE_KEY=aHR0cHM6Ly9kb2NrZXIudHJlbmQtYWkudGVjaHxkb2NrZXIudHJlbmQtYWkudGVjaDo4MDAwfHFSVWswaFRkV3g0Qk05c1ZVZVFMMnJRcFhnc25lc21RNnNLQ05SUXpRMWM9fDE4 \
+  -e EDGE_INSECURE_POLL=1 \
+  --name portainer_edge_agent \
+  portainer/agent:2.21.2
+  
+    
+# Then RUN the Following Command on the Host (Remote) Docker Standalone:
+
+docker run -d \
+  --name portainer_edge_agent \
+  --restart always \
+  -e EDGE=1 \
+  -e PORTAINER_SERVER=195.35.28.250:9000 \
+  -e PORTAINER_PORTAINER_TOKEN=aHR0cHM6Ly9kb2NrZXIudHJlbmQtYWkudGVjaHxkb2NrZXIudHJlbmQtYWkudGVjaDo4MDAwfHFSVWswaFRkV3g0Qk05c1ZVZVFMMnJRcFhnc25lc21RNnNLQ05SUXpRMWM9fDE4 \
+  portainer/agent:latest
+
+
+
+================================================================================================================================================
 While you can start with Docker Swarm to manage multiple Docker hosts, transitioning to Kubernetes later can be complex. Swarm and Kubernetes use different architectures and APIs, so you can't directly connect Swarm-managed nodes to a Kubernetes cluster. 
 
 Here's a suggested approach:
@@ -64,7 +197,7 @@ By following these steps, you should be able to connect your remote hosts to a l
 
 ===========================================================
 
-$ docker swarm init
+$ docker swarm init	# In The Manager Docker Server
 Swarm initialized: current node (mzlsz85y4saehp9zkuml9oqam) is now a manager.
 
 To add a worker to this swarm, run the following command:
@@ -72,6 +205,13 @@ To add a worker to this swarm, run the following command:
     docker swarm join --token SWMTKN-1-4iga9lgvc92xq7vf34kcj2m7rz8onxqfbxc0t3od8pmvdzsbfo-e4g05nv8p2wa7dxjum0pjlofx 195.35.28.250:2377
 
 To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+$ docker node ls	# In the 
+$ docker swarm leave	# In the Remote (Host) Server
+$ docker node rm q4olq1lwpatwb4fntkwz0ylyk
+$ 
+
+
 
 ==============================================================
 
@@ -170,6 +310,14 @@ After adding nodes and ensuring the firewall ports are open, you can verify the 
 
 ### Summary
 While Portainer simplifies Docker and Swarm management significantly, you'll need to handle firewall configuration separately using command-line tools or other firewall management software. Portainer excels at managing and monitoring your Docker environment visually but doesn't manage network configurations directly.
+
+===================================================================================================================================
+
+Install Kubernetes:
+------------------
+
+sudo snap install kubectl --classic
+
 
 
 

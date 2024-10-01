@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  alusdb:
+    image: postgres:latest
+    container_name: alusdb
+    build:
+      context: ./alusdb
+      args:
+        PUID: 1001
+        PGID: 997
+    environment:
+      PUID: 1001
+      PGID: 997
+      POSTGRES_USER: alus
+      POSTGRES_PASSWORD: "AS.VpS.c@TaI24"
+      POSTGRES_DB: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - /opt/alus/alus_data/alusdb:/var/lib/postgresql/data
+    networks:
+      alus:
+        ipv4_address: 172.31.0.2
+
+  alus:
+    image: alus_odoo17_image_tag:17
+    container_name: alus
+    depends_on:
+      - alusdb
+    build:
+      context: ./alus
+      args:
+        PUID: 1001
+        PGID: 997
+    environment:
+      PUID: 1001
+      PGID: 997
+      HOST: alusdb
+      USER: alus
+      PASSWORD: "AS.VpS.c@TaI24"
+      DB_NAME: postgres
+    ports:
+      - "8269:8069"
+      - "8271:8071"
+      - "8272:8072"
+    volumes:
+      - /opt/alus/alus_data/alus-data:/var/lib/odoo
+      - /opt/alus/alus_data/alus-addons:/mnt/extra-addons
+      - /opt/alus/alus_data/alus-conf:/etc/odoo
+    networks:
+      alus:
+        ipv4_address: 172.31.0.3
+
+networks:
+  alus:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16
